@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+<body>
+    <div id="edit">
+        <div class="container-fluid pb-3 border-bottom">
+            <h1 class="h1">用户列表</h1>
+            <p>显示所有用户信息</p>
+            <div class="list-inline text-center">
+                <div class="list-inline-item ml-2">
+                    姓名:<input v-model="temp.name" type="text" name="name" id="" class="ml-3">
+                </div>
+                <div class="list-inline-item ml-2">
+                    初始密码:<input v-model="temp.password" type="password" name="name" id="" class="ml-3">
+                </div>
+                <div class="list-inline-item ml-2">
+                    Email:<input v-model="temp.email" type="email" name="name" id="" class="ml-3">
+                </div>
+                <div class="list-inline-item ml-2" >
+                    <input v-model="temp.character" type="radio" name="character" id="" class="mr-2" value="管理员">管理员
+                    <input v-model="temp.character" type="radio" name="character" id="" class="mr-2" value="普通用户">普通用户
+                </div>
+                <button @click="add" class="list-inlien-item btn btn-outline-primary">添加</button>
+            </div>
+        </div>
+
+        <div class="container mt-5">
+            <table class="table table-striped text-center">
+                <thead>
+                    <tr>
+                        <th scope="col">序号</th>
+                        <th scope="col">姓名</th>
+                        <th scope="col">密码</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">角色</th>
+                        <th scope="col">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(item, index) in person">
+                        <th scope="row">{{item.id}}</th>
+                        <td>{{item.name}}</td>
+                        <td>{{item.password}}</td>
+                        <td>{{item.email}}</td>
+                        <td>{{item.character}}</td>
+                        <td>
+                            <button class="btn btn-primary" @click="display(index)">编辑</button>
+                            <button class="btn btn-danger" @click="remove(index)">删除</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <change v-if="show" @hi="hide" @sen="update" :tname="editPage.name" :tpass="editPage.password" :temail="editPage.email" :tchar="editPage.character"></change>
+        </div>
+    </div>
+    <template id="page">
+        <div class="container border pt-3">
+            <h1 class="h1">修改用户</h1>
+            <div class="row mt-2 py-3">
+                <dt class="col-2">用户名</dt>
+                <dd class="col-10"><input type="text" name="" id="" class="mb-2 form-control" v-model="dname"></dd>
+                <dt class="col-2">初始密码</dt>
+                <dd class="col-10"><input type="password" name="" id="" class="mb-2 form-control" v-model="dpass"></dd>
+                <dt class="col-2">邮箱</dt>
+                <dd class="col-10"><input type="email" name="" id="" class="mb-2 form-control" v-model="demail"></dd>
+                <dt class="col-2">用户权限</dt>
+                <dd class="col-10">
+                    <input v-model="dchar" type="radio" name="character" id="" class="mb-2 mr-2" value="管理员">管理员
+                    <input v-model="dchar" type="radio" name="character" id="" class="mb-2 mr-2" value="普通用户">普通用户
+                </dd>
+                <button class="btn btn-primary ml-3" @click="send">修改</button>
+            </div>
+        </div>
+    </template>
+    
+    
+    <script>
+        var edit = new Vue({
+            el:'#edit',
+            
+            data:{
+                show:false,
+                person:[{
+                    id:1,
+                    name:'admin',
+                    password:'123',
+                    email:'admin@bua.edu.cn',
+                    character:'管理员',
+                }],
+
+                temp:{
+                    id:null,
+                    name:'',
+                    password:'',
+                    email:'',
+                    character:'',
+                },
+
+                editPage:{
+                    id:null,
+                    name:'',
+                    password:'',
+                    email:'',
+                    character:'',
+                }
+                
+            },
+            
+            methods:{
+                add:function(){
+                    if(this.temp.name && this.temp.password && this.temp.email && this.temp.character !=''){
+                        this.temp.id = this.person.length + 1;
+                        this.person.push(this.temp);
+                        this.temp = {id:null, name:'', password:'', email:'', character:''};
+                    }
+                },
+
+                remove:function(index){
+                    this.person.splice(index,1);
+                },
+
+                display:function(index){
+                    this.show = !this.show;
+                    num = index
+                    this.editPage.name = this.person[index].name;
+                    this.editPage.password = this.person[index].password;
+                    this.editPage.email = this.person[index].email;
+                    this.editPage.character = this.person[index].character;
+                },
+
+                hide:function(){
+                    this.show = !this.show;
+                },
+
+                update:function(data){
+                    this.person[num].name = data.name;
+                    this.person[num].password = data.password;
+                    this.person[num].email = data.email;
+                    this.person[num].character = data.character;
+                    this.show = !this.show;
+                },
+            },
+
+            components:{
+                'change':{
+                    template:'#page',
+                    props:["tname","tpass","temail","tchar"],
+
+                    data:function(){
+                        return{
+                            dname:this.tname,
+                            dpass:this.tpass,
+                            demail:this.temail,
+                            dchar:this.tchar
+                        }
+                    },
+
+                    watch:{
+                        tname:function(value){
+                            this.dname = value;
+                        },
+
+                        tpass:function(value){
+                            this.dpass = value;
+                        },
+
+                        temail:function(value){
+                            this.demail = value;
+                        },
+
+                        tchar:function(value){
+                            this.dchar = value;
+                        },
+                    },
+
+                    methods:{
+                        hid:function(){
+                            this.$emit('hi')
+                        },
+
+                        send:function(){
+                            var obj = {
+                                name:this.dname,
+                                password:this.dpass,
+                                email:this.demail,
+                                character:this.dchar
+                            };
+                            this.$emit('sen',obj)
+                        }
+                    }
+                }
+            }
+        })
+    </script>
+</body>
+</html>
